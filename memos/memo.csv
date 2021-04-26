@@ -1,0 +1,17 @@
+カラム名,説明
+video_id,動画ごとに割り振られる一意なid
+title,動画のタイトル
+publishedAt,動画の投稿時間
+channelId,動画を投稿したチャンネルのid
+channelTitle,チャンネルのタイトル
+categoryId,動画カテゴリのid
+collection_date,データレコードの収集日
+tags,動画に割り当てられたタグ
+likes,高評価の数
+dislikes,低評価の数
+comment_count,コメント数
+thumbnail_link,動画のサムネへのリンク
+comments_disabled,コメントが許可されない動画であるか？ Trueの場合にはcomment_countは0となる
+ratings_disabled,高評価と低評価が許可されない動画であるか？ Trueの場合にはlikesとdislikesは0となる
+description,動画の説明文
+y,視聴回数
