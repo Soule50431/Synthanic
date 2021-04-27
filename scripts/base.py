@@ -23,6 +23,7 @@ class Feature(metaclass=ABCMeta):
         preprocessed_file = load_json("preprocessed_file")
         self.all_path = Path(self.dir) / f'{self.name}_{preprocessed_file}.ftr'
         self.use_columns = []
+        self.categorical_features = []
 
     def run(self, df):
         # create_features()で特徴量抽出を行い、timerでその計算時間を計測
@@ -40,9 +41,11 @@ class Feature(metaclass=ABCMeta):
 
     def save(self):
         # allをfeatherファイルで保存し、特徴量クラス名と学習に使用するカラム名を保存
-        self.all.to_feather(str(self.all_path))
+        self.all[self.use_columns].to_feather(str(self.all_path))
         assert len(self.use_columns) != 0, "using columns aren't set"
         add_json("features", {self.name:self.use_columns})
+        add_json("categorical_features", self.categorical_features)
+        add_json("dtypes", {column:str(self.all[column].dtype) for column in self.all.columns})
 
 
 def get_features(namespace):
@@ -55,7 +58,7 @@ def get_features(namespace):
 def generate_features(namespace, dataframe, overwrite):
     if overwrite:
         # default.jsonのfeaturesとuse_columnsを初期化
-        clear_json(["features"], [dict])
+        clear_json(["features", "categorical_features", "dtypes"], [dict, list, dict])
 
     for f in get_features(namespace):
         # Featureを継承したクラスに対して処理を行う

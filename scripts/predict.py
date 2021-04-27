@@ -18,21 +18,20 @@ def _write_submission(output_file, prediction, test):
     print("write to csv")
 
 
-def predict(output_file, skip_columns=[]):
+def predict(output_file, skip_features=[], suffix="ftr"):
     # テストデータの読み込み
-    _, test = load_datasets()
-
+    _, test = load_datasets(suffix)
     # モデルの読み込み
     with open(load_path("models_path")/add_pkl(output_file), "rb") as f:
         model = pickle.load(f)
 
     # 予測用のDMatrixを作成
-    use_columns = get_use_columns(skip_columns=skip_columns)
+    use_columns = get_use_columns(skip_features=skip_features)
     x = test[use_columns]
-    dtest = xgboost.DMatrix(x, feature_names=use_columns)
+    # dtest = xgboost.DMatrix(x, feature_names=use_columns)
 
     # 予測
-    prediction = predict_(model, dtest)
+    prediction = predict_(model, x)
 
     # 提出ファイル作成
     _write_submission(output_file, prediction, test)

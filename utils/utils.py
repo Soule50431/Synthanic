@@ -93,7 +93,10 @@ def add_json(feature, data, overwrite=False):
             json_data[feature] = []
 
     if type(data) is list:
-        json_data[feature].extend(data)
+        if feature in json_data:
+            json_data[feature].extend(data)
+        else:
+            json_data[feature] = data
     elif type(data) is dict:
         json_data[feature].update(data)
     else:
@@ -152,9 +155,16 @@ def reduce_mem_usage(df, logger=None, level=logging.DEBUG):
     return df
 
 
-def load_datasets():
+def load_datasets(suffix):
     features = load_json("features")
-    dfs = [pd.read_feather(load_path("features_path")/f"{feature}_train_test.ftr") for feature in features]
+
+    assert suffix == "csv" or suffix == "ftr"
+    if suffix == "csv":
+        dfs = [pd.read_csv(load_path("inputs_path") / f"train_test.csv", dtype=load_json("dtypes"))]
+        print("load train_test.csv")
+    elif suffix == "ftr":
+        dfs = [pd.read_feather(load_path("features_path")/f"{feature}_train_test.ftr") for feature in features]
+        print("load train_test.ftr")
     df = pd.concat(dfs, axis=1)
     del dfs
     size = load_json("size")
@@ -167,20 +177,20 @@ def load_datasets():
     return train, test
 
 
-def add_time(model):
+def add_time(model_name):
     today = datetime.datetime.fromtimestamp(time.time())
     now = today.strftime("%Y-%m-%d_%H-%M-%S")
-    return model + f"_{now}"
+    return model_name + f"_{now}"
 
 
-def get_use_columns(skip_columns=[]):
+def get_use_columns(skip_features=[]):
     # skip_columnsで使用しない特徴量を選択し
     # default.jsonで指定されているId_nameとtarget_nameは除いた
     # カラム名のリストを返す
     features = load_json("features")
     use_columns = []
     for key, value in features.items():
-        if not(key in skip_columns):
+        if not(key in skip_features):
             use_columns.extend(value)
     use_columns = remove_id_and_target(use_columns)
 
@@ -190,7 +200,7 @@ def get_use_columns(skip_columns=[]):
 def save_evaluation(output_file, evaluation_value, use_columns):
     evaluation_value_path = load_path("memos_path")/"cross_validation.csv"
     if not evaluation_value_path.exists():
-        header = ["model", "evaluation_value", "used_columns"]
+        header = ["model", "evaluation_value", "used_columns", "memo"]
     else:
         header = None
 
@@ -198,4 +208,4 @@ def save_evaluation(output_file, evaluation_value, use_columns):
         writer = csv.writer(f)
         if header is not None:
             writer.writerow(header)
-        writer.writerow([output_file, evaluation_value, use_columns])
+        writer.writerow([output_file, evaluation_value, use_columns, ""])

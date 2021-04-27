@@ -5,17 +5,23 @@ input_path = load_path("inputs_path")
 
 def _preprocess(df):
     # 前処理の具体的な処理
-    delete_columns = ["Name", "SibSp", "Parch", "Ticket", "Cabin"]
+    delete_columns = ["Name"]
     df.drop(delete_columns, axis=1, inplace=True)
-    df["Age"].fillna(df["Age"].mean())
-    df["Fare"].fillna(df["Fare"].median())
+    df["Age"].fillna(df["Age"].mean(), inplace=True)
+    df["Fare"].fillna(df["Fare"].median(), inplace=True)
     df["Embarked"].fillna("S", inplace=True)
+    df["Cabin"].fillna("X", inplace=True)
+    df["Ticket"].fillna("X", inplace=True)
 
 
-def preprocess(overwrite):
+def preprocess(overwrite, suffix="ftr"):
     # file_names : 入力ファイル名のList 拡張子は付いていても付いていなくてもよい
     # boolean overwrite : ファイルの上書きをするか
-    preprocessed_path = input_path/add_feather(load_json("preprocessed_file"))
+    assert suffix == "csv" or suffix == "ftr"
+    if suffix == "csv":
+        preprocessed_path = input_path/add_csv(load_json("preprocessed_file"))
+    elif suffix == "ftr":
+        preprocessed_path = input_path/add_feather(load_json("preprocessed_file"))
 
     if (not overwrite) and preprocessed_path.exists:
         # 上書きしない時、かつ前処理を行ったふぃあるが既に存在するときは処理をスキップ
@@ -41,6 +47,10 @@ def preprocess(overwrite):
     # dfをtrain_test.ftrに保存
     if overwrite or not preprocessed_path.exists():
         df.reset_index(inplace=True)
-        df.to_feather(preprocessed_path)
-        file_name = add_feather(load_json("preprocessed_file"))
+        if suffix == "csv":
+            df.to_csv(preprocessed_path)
+            file_name = add_csv(load_json("preprocessed_file"))
+        elif suffix == "ftr":
+            df.to_feather(preprocessed_path)
+            file_name = add_feather(load_json("preprocessed_file"))
         print(f"saved to {file_name}")
