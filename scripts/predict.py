@@ -1,13 +1,4 @@
-import xgboost
-import pickle
-
 from utils.utils import *
-
-
-def predict_(model, dtest):
-    prediction = model.predict(dtest)
-    prediction = [1 if i > 0.5 else 0 for i in prediction]
-    return prediction
 
 
 def _write_submission(output_file, prediction, test):
@@ -18,20 +9,16 @@ def _write_submission(output_file, prediction, test):
     print("write to csv")
 
 
-def predict(output_file, skip_features=[], suffix="ftr"):
+def predict(output_file, training_algorithm, skip_features=[], suffix="ftr"):
     # テストデータの読み込み
     _, test = load_datasets(suffix)
+    use_columns = get_use_columns(skip_features)
     # モデルの読み込み
-    with open(load_path("models_path")/add_pkl(output_file), "rb") as f:
-        model = pickle.load(f)
-
-    # 予測用のDMatrixを作成
-    use_columns = get_use_columns(skip_features=skip_features)
-    x = test[use_columns]
-    # dtest = xgboost.DMatrix(x, feature_names=use_columns)
+    algorithm = training_algorithm()
+    algorithm.load_model(output_file)
 
     # 予測
-    prediction = predict_(model, x)
+    prediction = algorithm.predict(test[use_columns])
 
     # 提出ファイル作成
     _write_submission(output_file, prediction, test)

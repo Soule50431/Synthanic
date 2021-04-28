@@ -90,13 +90,10 @@
         ]
     },
     "parameters": {
-        "learning_rate": 0.1,
-        "num_leaves": 8,
-        "boosting_type": "gbdt",
-        "colsample_bytree": 0.65,
-        "reg_alpha": 1,
-        "reg_lambda": 1,
-        "num_class": 2
+        "objective": "binary",
+        "max_bin": 427,
+        "num_leaves": 79,
+        "learning_rate": 0.05
     },
     "loss": "multi_logloss",
     "target_name": "Survived",

@@ -8,14 +8,14 @@ from utils.evaluation_functions import *
 from utils.models import *
 
 
-output_file = add_time("lightgbm")
+output_file = add_time("lightgbm_pseudo1")
 # skip_columns = ["IdTarget"]
 
 
 if __name__ == "__main__":
     preprocess(overwrite=False)
-    feature_engineer(overwrite=True)
-    cross_validate(output_file, training_algorithm=xgboost_train, evaluation_function=accuracy_score)
+    # feature_engineer(overwrite=True)
+    cross_validate(output_file, training_algorithm=LightGBM, evaluation_function=accuracy_score)
 
-    # train_model(output_file, training_algorithm=lightgbm_train)
-    # predict(output_file)
+    # train_model(output_file, training_algorithm=LightGBM)
+    # predict(output_file, training_algorithm=LightGBM)

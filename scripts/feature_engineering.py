@@ -1,4 +1,3 @@
-from base import Feature, generate_features
 from utils import *
 
 Feature.dir = load_path("features_path")

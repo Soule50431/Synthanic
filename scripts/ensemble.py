@@ -18,9 +18,9 @@ def ensemble(file_names, output_file):
 
 if __name__ == "__main__":
     inputs = ["submission_LogisticRegression.csv",
-                   "submission_lightgbm.csv",
-                   "lightgbm_baseline_2021-04-26_23-54-44.csv"]
+                   "lightgbm_2021-04-27_22-04-25.csv",
+                   "logistic_regression_2021-04-27_21-51-24.csv"]
 
-    output = add_time("ensemble_udon_lr800_lgbm783_soule_lgbm784")
+    output = add_time("ensemble_soule_logistic80043_lgbm78630_udon_rogistic80051")
     ensemble(inputs, output)
 

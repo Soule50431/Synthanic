@@ -1,4 +1,4 @@
-from base import *
+from utils.base import *
 
 input_path = load_path("inputs_path")
 
