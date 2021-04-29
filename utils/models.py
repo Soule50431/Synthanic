@@ -57,11 +57,11 @@ class LightGBM(Model):
             valid_sets.append(lgbtrain)
 
         self.model = lgb.train(params, lgbtrain, valid_sets=valid_sets,
-                          verbose_eval=log, num_boost_round=1000, early_stopping_rounds=10)
+                          verbose_eval=log, num_boost_round=2000, early_stopping_rounds=10)
 
     def predict(self, x):
         prediction = self.model.predict(x)
-        prediction = [1 if i > 0.5 else 0 for i in prediction]
+        # prediction = [1 if i > 0.5 else 0 for i in prediction]
         return prediction
 
 

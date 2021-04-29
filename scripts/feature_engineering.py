@@ -1,4 +1,5 @@
 from utils import *
+from validation import *
 
 Feature.dir = load_path("features_path")
 
@@ -34,15 +35,17 @@ class IsAlone(Feature):
 
 class Cabin(Feature):
     def create_features(self, df):
-        self.all = pd.concat([self.all, pd.get_dummies(df["Cabin"].map(lambda x: x[0]), prefix="Cabin")])
+        df["Cabin"] =df["Cabin"].map(lambda x: x[0])
+        df["Cabin"] = df["Cabin"].map(lambda x: "AD" if x == "D" or x == "A" else "Other")
+        self.all = pd.concat([self.all, pd.get_dummies(df["Cabin"], prefix="Cabin")])
         self.use_columns.extend(self.all.columns)
 
 
 class Ticket(Feature):
     def create_features(self, df):
-        self.all = pd.concat([self.all,
-                              pd.get_dummies(df["Ticket"].map(lambda x: str(x).split()[0] if len(str(x).split()) > 1 else "X")
-                                                , prefix="Ticket")])
+        df["Ticket"] = df["Ticket"].map(lambda x: str(x).split()[0] if len(str(x).split()) > 1 else "X")
+        df["Ticket"] = df["Ticket"].map(lambda x: "PPC" if x == "PC" or x == "PP" else "Other")
+        self.all = pd.concat([self.all, pd.get_dummies(df["Ticket"], prefix="Ticket")])
         self.use_columns.extend(self.all.columns)
 
 
@@ -63,6 +66,17 @@ class IdTarget(Feature):
         self.all[id_name] = df[id_name]
         self.all[target] = df[target]
         self.use_columns.extend([id_name,target])
+
+
+class Stacking(Feature):
+    def create_features(self, df):
+        prediction_x, prediction_y = cross_validate(None, training_algorithm=LightGBM,
+                                      evaluation_function=accuracy_score)
+        temp =[]
+        temp.extend(prediction_x)
+        temp.extend(prediction_y)
+        self.all["lgbm"] = temp
+        self.use_columns = ["lgbm"]
 
 
 def feature_engineer(overwrite, suffix="ftr"):

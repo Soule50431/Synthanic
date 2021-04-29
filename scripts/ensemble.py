@@ -17,10 +17,17 @@ def ensemble(file_names, output_file):
 
 
 if __name__ == "__main__":
-    inputs = ["submission_LogisticRegression.csv",
-                   "lightgbm_2021-04-27_22-04-25.csv",
-                   "logistic_regression_2021-04-27_21-51-24.csv"]
+    inputs = ["ensemble_soule_logistic80043_lgbm78630_udon_rogistic80051_2021-04-27_22-13-38.csv",
+                "lightgbm_2021-04-27_22-04-25.csv",
+                "lightgbm_pseudo_2021-04-28_16-20-20.csv",
+              "lightgbm_pseudo_ticket_cabin_2021-04-28_22-10-07.csv",
+              "logistic_regression_2021-04-27_21-51-24.csv",
+              "stacking_lgbm_logistic_2021-04-29_00-49-57.csv",
+              "submission_lightgbm.csv",
+              "submission_LogisticRegression.csv",
+              "xgboost_pseudo_2021-04-28_21-21-56.csv"
+              ]
 
-    output = add_time("ensemble_soule_logistic80043_lgbm78630_udon_rogistic80051")
+    output = add_time("ensemble_all")
     ensemble(inputs, output)
 
